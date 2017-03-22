@@ -16,10 +16,7 @@
 %define libdbnss	%mklibname %{sname}nss %{api}
 %define devdbnss	%mklibname %{sname}nss %{api} -d
 
-%ifnarch %[mips} %{arm} aarch64
-%bcond_with java
-%define gcj_support 0
-%endif
+%bcond_without java
 
 %bcond_without sql
 %bcond_with tcl
@@ -36,7 +33,7 @@
 Summary:	The Berkeley DB database library for C
 Name:		%{sname}%{binext}
 Version:	6.1.26
-Release:	6
+Release:	7
 License:	BSD
 Group:		System/Libraries
 Url:		http://www.oracle.com/technology/software/products/berkeley-db/
@@ -46,8 +43,6 @@ Patch0:		db-5.1.19-db185.patch
 Patch1:		db-5.1.25-sql_flags.patch
 Patch2:		db-5.1.19-tcl-link.patch
 Patch3:		arm-thumb-mutex_db5.patch
-# fedora patches
-Patch101:	db-4.7.25-jni-include-dir.patch
 # ubuntu patches
 Patch102:	006-mutex_alignment.patch
 
@@ -66,13 +61,6 @@ BuildRequires:	db1-devel
 BuildRequires:	java-rpmbuild
 BuildRequires:	java-devel
 BuildRequires:	sharutils
-# required for jni.h
-BuildRequires:	gcj-devel
-#(proyvind): try workaround issue preventng build
-BuildRequires:	gcc-java
-%if %{gcj_support}
-BuildRequires:	java-gcj-compat-devel
-%endif
 %endif
 
 %description
@@ -168,9 +156,6 @@ Requires:	%{libdbjava} = %{EVRD}
 Requires:	%{libdbcxx} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
 Provides:	%{sname}-devel = %{EVRD}
-# MD remove the following line if there is a newer fork of the same api
-# ie: this is 6.0 and there is a fork of 6.1 or 6.2....
-Provides:	%{sname}%{shortapi}-devel = %{EVRD}
 
 %description -n	%{devname}
 This package contains the header files, libraries, and documentation for
@@ -450,24 +435,12 @@ mkdir -p %{buildroot}%{_javadocdir}/db%{api}-%{version}
 cp -a lang/sql/jdbc/doc/* %{buildroot}%{_javadocdir}/db%{api}-%{version}
 ln -s db%{api}-%{version} %{buildroot}%{_javadocdir}/db%{api}
 
-%if %{gcj_support}
-rm -rf aot-compile-rpm
-aot-compile-rpm
-%endif
 %endif
 
 rm -rf %{buildroot}%{_includedir}/db_nss/db_cxx.h
 
 %if %{with sql}
 mv %{buildroot}%{_bindir}/{dbsql,db%{api}_sql}
-%endif
-
-%if %{with java}
-%post -n %{libdbjava}
-%{update_gcjdb}
-
-%postun -n %{libdbjava}
-%{clean_gcjdb}
 %endif
 
 %files -n %{libname}
@@ -490,10 +463,6 @@ mv %{buildroot}%{_bindir}/{dbsql,db%{api}_sql}
 %{_libdir}/libdb_java-%{api}_g.so
 %{_jnidir}/db%{api}.jar
 %{_jnidir}/db%{api}-%{version}.jar
-%if %{gcj_support}
-%dir %{_libdir}/gcj/%{name}
-%{_libdir}/gcj/%{name}/*
-%endif
 
 %files -n %{libdbjava}-javadoc
 %doc %{_javadocdir}/db%{api}-%{version}
