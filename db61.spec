@@ -33,7 +33,7 @@
 Summary:	The Berkeley DB database library for C
 Name:		%{sname}%{binext}
 Version:	6.1.26
-Release:	7
+Release:	8
 License:	BSD
 Group:		System/Libraries
 Url:		http://www.oracle.com/technology/software/products/berkeley-db/
@@ -156,6 +156,11 @@ Requires:	%{libdbjava} = %{EVRD}
 Requires:	%{libdbcxx} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
 Provides:	%{sname}-devel = %{EVRD}
+%if %{mdvver} <= 3000000
+# MD remove the following line if there is a newer fork of the same api
+# ie: this is 6.0 and there is a fork of 6.1 or 6.2....
+Provides:	%{sname}%{shortapi}-devel = %{EVRD}
+%endif
 
 %description -n	%{devname}
 This package contains the header files, libraries, and documentation for
