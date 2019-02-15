@@ -1,5 +1,4 @@
 %define sname	db
-%define version 6.1.26
 %define api %(echo %{version}|cut -d. -f1,2)
 %define shortapi %(echo %{version}|cut -d. -f1,1)
 %define binext	%(echo %{api} | sed -e 's|\\.||g')
@@ -32,8 +31,8 @@
 
 Summary:	The Berkeley DB database library for C
 Name:		%{sname}%{binext}
-Version:	6.1.26
-Release:	9
+Version:	6.1.38
+Release:	1
 License:	BSD
 Group:		System/Libraries
 Url:		http://www.oracle.com/technology/software/products/berkeley-db/
@@ -492,6 +491,7 @@ mv %{buildroot}%{_bindir}/{dbsql,db%{api}_sql}
 %doc docs/api_reference/C/db_verify.html
 %{_bindir}/%{name}_archive
 %{_bindir}/%{name}_checkpoint
+%{_bindir}/db%{version}_convert
 %{_bindir}/%{name}_deadlock
 %{_bindir}/%{name}_dump*
 %{_bindir}/%{name}_hotbackup
